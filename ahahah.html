@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="id" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Permintaan Maaf 💛</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: "Nunito", sans-serif;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      .app-wrapper {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        background: linear-gradient(
+          135deg,
+          #ffecd2 0%,
+          #fcb69f 50%,
+          #ffeaa7 100%
+        );
+        position: relative;
+      }
+
+      /* Floating elements */
+      .floating-element {
+        position: absolute;
+        pointer-events: none;
+        opacity: 0.6;
+        animation: float 8s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(10deg);
+        }
+      }
+
+      /* Card animations */
+      .card-pop {
+        animation: cardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+
+      @keyframes cardPop {
+        0% {
+          transform: scale(0.95);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Button squish */
+      .btn-squish:active {
+        transform: scale(0.92);
+      }
+
+      .btn-squish {
+        transition: transform 0.15s ease;
+      }
+
+      /* Floating hearts animation */
+      .heart-particle {
+        position: fixed;
+        pointer-events: none;
+        animation: heartFloat 2s ease-out forwards;
+        z-index: 100;
+      }
+
+      @keyframes heartFloat {
+        0% {
+          opacity: 1;
+          transform: translateY(0) scale(1) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-150px) scale(0.5) rotate(45deg);
+        }
+      }
+
+      /* GIF container */
+      .gif-container {
+        width: 70px;
+        height: 70px;
+        border-radius: 9999px;
+        overflow: hidden;
+        border: 3px solid white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        background: #ffecd2;
+      }
+
+      .gif-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Progress bar */
+      .progress-fill {
+        transition: width 0.3s ease;
+      }
+
+      /* Bubble decoration */
+      .bubble {
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.8),
+          rgba(255, 182, 159, 0.4)
+        );
+      }
+
+      /* Photo placeholder */
+      .photo-container {
+        width: 180px;
+        height: 180px;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 4px solid white;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .photo-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* Confetti */
+      .confetti {
+        position: fixed;
+        pointer-events: none;
+        animation: confettiFall 3s ease-out forwards;
+        z-index: 100;
+      }
+
+      @keyframes confettiFall {
+        0% {
+          opacity: 1;
+          transform: translateY(0) rotate(0deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(100px) rotate(720deg);
+        }
+      }
+    </style>
+  </head>
+  <body class="h-full">
+    <div class="app-wrapper" id="app">
+      <!-- Floating decorations -->
+      <div id="decorations"></div>
+
+      <!-- Heart particles container -->
+      <div id="particles"></div>
+
+      <!-- Main content -->
+      <div
+        class="min-h-full flex flex-col items-center justify-center p-4 py-8 relative z-10"
+      >
+        <!-- Main Card -->
+        <div
+          id="mainCard"
+          class="w-full max-w-sm bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl p-6 relative card-pop"
+        >
+          <!-- GIF -->
+          <div class="absolute -top-6 right-4 gif-container" id="gifContainer">
+            <img
+              id="gifImage"
+              src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif"
+              alt="cute gif"
+              loading="lazy"
+              onerror="
+                this.src =
+                  'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥺</text></svg>'
+              "
+            />
+          </div>
+
+          <!-- Progress -->
+          <div id="progressContainer" class="mb-4 hidden">
+            <div class="flex justify-between items-center mb-1">
+              <span
+                class="text-xs text-orange-400 font-semibold"
+                id="progressText"
+                >1/17</span
+              >
+              <span class="text-xs text-orange-300">💛</span>
+            </div>
+            <div class="w-full h-2 bg-orange-100 rounded-full overflow-hidden">
+              <div
+                id="progressBar"
+                class="h-full bg-gradient-to-r from-orange-300 to-pink-400 rounded-full progress-fill"
+                style="width: 5.88%"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div id="cardContent">
+            <!-- Initial state -->
+            <div id="introContent">
+              <h2
+                class="text-lg font-bold text-orange-500 mb-3 mt-4"
+                id="mainTitle"
+              >
+                Aku mau ngomong sesuatu…
+              </h2>
+              <p class="text-gray-600 text-sm leading-relaxed mb-2">
+                Hai… sebelum kamu scroll atau close, kasih aku waktu sebentar
+                ya? 🥺
+              </p>
+              <p class="text-gray-500 text-xs">
+                Ada 17 hal yang pengen aku sampaikan ke kamu…
+              </p>
+            </div>
+
+            <!-- Message content (hidden initially) -->
+            <div id="messageContent" class="hidden">
+              <p
+                class="text-gray-700 text-base leading-relaxed font-medium text-center py-4"
+                id="messageText"
+              ></p>
+            </div>
+
+            <!-- Conclusion content (hidden initially) -->
+            <div id="conclusionContent" class="hidden">
+              <h2
+                class="text-xl font-bold text-orange-500 mb-4 text-center"
+                id="conclusionTitle"
+              >
+                Intinya…
+              </h2>
+
+              <div class="flex justify-center mb-4">
+                <div class="photo-container">
+                  <img
+                    src="love.jpeg"
+                    alt="Our photo"
+                    loading="lazy"
+                    onerror="
+                      this.parentElement.innerHTML =
+                        '<span class=\'text-4xl\'>📷</span><br><span class=\'text-xs text-gray-400\'>photo.jpg</span>'
+                    "
+                  />
+                </div>
+              </div>
+
+              <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                Makasih udah baca sampai sini. Aku nggak minta semuanya langsung
+                baik-baik aja, tapi aku beneran ingin memperbaiki. Aku cuma
+                heran, kenapa kamu bisa mau chat panjang lebar sama aku, cerita
+                masalalu kamu ketika kamu pacaran saat itu dan padahal kamu
+                sendiri ga cerita ke orang yang aku sebut trus namanya,
+                bener-bener ke aku doang, bener kan? 🥹 dan yang selalu aku
+                pertanyakan, apakah cara berteman kamu seperti sekarang? dimana
+                kamu selalu ngabarin, suka tiba-tiba kirim pap / photo random?
+                Makanya diriku ini sering tanya sama kamu, "Kamu kalo deket,
+                atau chat sama cowok lain apa sering? kaya saling ngabarin?
+                terus kirim photo random kamu juga?" Tapi kamu sendiri bilang
+                "Ngga ya kocak" dengan nada nyebelin ya 😑 dari situ aku mikir,
+                "Terus maksud kamu kaya gini sekarang ke aku apa? temen? atau
+                gimana?" aku aja sempet syok.
+                <br /><br />
+                tapi at the end aku ikutin alur yang kamu buat, aku juga coba
+                kasih feedback yang sama. Dan kamu pun tau sekarang, dimana aku
+                punya trauma, punya masalalu yang paling selalu aku inget.
+                dimana ketika ada yang deketin aku dan mungkin feedback nya kaya
+                kamu bahkan lebih, ya akupun kasih feedback yang sama dan dia
+                pun pernah kode aku kaya "Peka kamu teh" dan alhasil ketika aku
+                coba buka hati lagi, aku di tinggal lagi. siklus aku selalu sama
+                🥹 Maksud aku ketika kamu memang mau berteman baik, aku harap
+                apa yang kamu lakuin sekarang memang berteman baik sama aku
+                bukan karena kamu pengen ngelampiasin semua emosi kamu ke
+                aku🥹🥹🥹 ayo berteman baik lagi, aku suka sama apa yang kamu
+                lakuin sekarang. tapi jangan pernah kasih aku harapan bahwa kita
+                bisa lebih dari ini, jangan yaaa. kita juga sama-sama pernah
+                bilang kalo kita berdua pengen fokus sama kuliah dan pekerjaan
+                yang kita kerjakan sekarang, SO ya aku harap kamu pegang omongan
+                kamu 😋 Aku suka kamu Cuni Rias Tuti like a friends 🌻🌼🌷
+              </p>
+
+              <p class="text-center text-xs text-orange-400 font-medium">
+                Di maafin ya salahnya aku💙. aku pengen liat kamu senyum trus
+                karena kalau kamu senyum sedikit aja, itu udah bikin aku lega
+                😭💛
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Button -->
+        <button
+          id="nextBtn"
+          class="mt-6 px-8 py-3 bg-gradient-to-r from-orange-400 to-pink-400 text-white font-bold rounded-full shadow-lg btn-squish hover:shadow-xl transition-shadow"
+        >
+          Next 💫
+        </button>
+
+        <!-- Restart button (hidden) -->
+        <button
+          id="restartBtn"
+          class="mt-4 px-6 py-2 bg-white/80 text-orange-400 font-semibold rounded-full shadow-md btn-squish hover:bg-white transition-colors text-sm hidden"
+        >
+          🔄 Ulangi dari awal
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Default config
+      const defaultConfig = {
+        main_title: "Aku mau ngomong sesuatu…",
+        conclusion_title: "Intinya…",
+        primary_color: "#fb923c",
+        secondary_color: "#f472b6",
+        background_start: "#ffecd2",
+        background_end: "#fcb69f",
+      };
+
+      // Messages
+      const messages = [
+        "Maaf ya… aku tahu aku sempat bikin kamu capek.",
+        "Aku nggak mau pembelaan, aku cuma mau kamu tahu: aku nyesel.",
+        "Kalau aku bisa puter waktu, aku bakal pilih jadi lebih percaya sama semua perkataan kamu.",
+        "Aku salah karena terlalu yakin sama apa yang aku pikirkan itu benar.",
+        "Aku seharusnya berhenti ketika kamu udah cerita semuanya ke aku.",
+        "Aku minta maaf karena aku selalu cap kamu sebagai pembohong.",
+        "Aku minta maaf karena nggak langsung dengerin kamu.",
+        "Aku nggak mau kamu ngehindar karena masalah ini, karena aku mau kamu saling sharing, bercanda lagi sama aku.",
+        "Aku harap kamu gak akan bosen untuk cerita, sharing, bahkan ketika ngobrol sama aku lagi ya.",
+        "Aku janji aku ga bakal ganggu, tanya kamu yang gimana-gimana lagi.",
+        "Kalau kamu masih marah, itu wajar. Aku terima.",
+        "Aku tetap di sini, bukan buat maksa, tapi buat memperbaiki.",
+        "Aku belajar: yang kamu butuhin bukan alasan, tapi perubahan.",
+        "Aku minta kesempatan untuk buktiin, bukan sekadar ngomong.",
+        "Boleh ya… maafin aku? 🥹",
+        "Aku ga mau kita tuh berantem dan ga berteman lagi karena masalah cowok lain yang ga ada urusan nya juga sama kamu.",
+        "Maaf ya… aku bener-bener minta maaf. Tolong maafin aku 🥹",
+      ];
+
+      // GIF URLs
+      const gifs = [
+        "4.gif",
+        "5.gif",
+        "2.gif",
+        "3.gif",
+        "7.gif",
+        "8.gif",
+        "1.gif",
+        "6.gif",
+      ];
+
+      // State
+      let currentIndex = -1; // -1 = intro, 0-16 = messages, 17 = conclusion
+
+      // DOM elements
+      const mainCard = document.getElementById("mainCard");
+      const nextBtn = document.getElementById("nextBtn");
+      const restartBtn = document.getElementById("restartBtn");
+      const progressContainer = document.getElementById("progressContainer");
+      const progressText = document.getElementById("progressText");
+      const progressBar = document.getElementById("progressBar");
+      const introContent = document.getElementById("introContent");
+      const messageContent = document.getElementById("messageContent");
+      const messageText = document.getElementById("messageText");
+      const conclusionContent = document.getElementById("conclusionContent");
+      const gifImage = document.getElementById("gifImage");
+      const decorations = document.getElementById("decorations");
+      const particles = document.getElementById("particles");
+      const mainTitleEl = document.getElementById("mainTitle");
+      const conclusionTitleEl = document.getElementById("conclusionTitle");
+
+      // Create floating decorations
+      function createDecorations() {
+        const emojis = ["💛", "💕", "✨", "🌸", "💫", "🧡", "💖"];
+        for (let i = 0; i < 12; i++) {
+          const el = document.createElement("div");
+          el.className = "floating-element";
+          el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+          el.style.left = Math.random() * 100 + "%";
+          el.style.top = Math.random() * 100 + "%";
+          el.style.fontSize = 12 + Math.random() * 16 + "px";
+          el.style.animationDelay = Math.random() * 5 + "s";
+          el.style.animationDuration = 6 + Math.random() * 4 + "s";
+          decorations.appendChild(el);
+        }
+      }
+
+      // Create heart particles
+      function createHearts() {
+        const hearts = ["💛", "💕", "🧡", "💖", "✨"];
+        for (let i = 0; i < 8; i++) {
+          setTimeout(() => {
+            const heart = document.createElement("div");
+            heart.className = "heart-particle";
+            heart.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = 20 + Math.random() * 60 + "%";
+            heart.style.bottom = "30%";
+            heart.style.fontSize = 16 + Math.random() * 12 + "px";
+            particles.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 2000);
+          }, i * 100);
+        }
+      }
+
+      // Create confetti
+      function createConfetti() {
+        const colors = ["#fb923c", "#f472b6", "#fbbf24", "#a78bfa", "#34d399"];
+        for (let i = 0; i < 15; i++) {
+          setTimeout(() => {
+            const conf = document.createElement("div");
+            conf.className = "confetti";
+            conf.style.left = 10 + Math.random() * 80 + "%";
+            conf.style.top = "20%";
+            conf.style.width = 6 + Math.random() * 6 + "px";
+            conf.style.height = 6 + Math.random() * 6 + "px";
+            conf.style.backgroundColor =
+              colors[Math.floor(Math.random() * colors.length)];
+            conf.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
+            particles.appendChild(conf);
+
+            setTimeout(() => conf.remove(), 3000);
+          }, i * 50);
+        }
+      }
+
+      // Update GIF
+      function updateGif() {
+        const randomGif = gifs[Math.floor(Math.random() * gifs.length)];
+        gifImage.src = randomGif;
+      }
+
+      // Animate card
+      function animateCard() {
+        mainCard.classList.remove("card-pop");
+        void mainCard.offsetWidth; // Trigger reflow
+        mainCard.classList.add("card-pop");
+      }
+
+      // Update view
+      function updateView() {
+        animateCard();
+        createHearts();
+        updateGif();
+
+        if (currentIndex === -1) {
+          // Intro
+          introContent.classList.remove("hidden");
+          messageContent.classList.add("hidden");
+          conclusionContent.classList.add("hidden");
+          progressContainer.classList.add("hidden");
+          nextBtn.textContent = "Next 💫";
+          nextBtn.classList.remove("hidden");
+          restartBtn.classList.add("hidden");
+        } else if (currentIndex >= 0 && currentIndex < 17) {
+          // Messages
+          introContent.classList.add("hidden");
+          messageContent.classList.remove("hidden");
+          conclusionContent.classList.add("hidden");
+          progressContainer.classList.remove("hidden");
+
+          messageText.textContent = messages[currentIndex];
+          progressText.textContent = `${currentIndex + 1}/17`;
+          progressBar.style.width = ((currentIndex + 1) / 17) * 100 + "%";
+
+          if (currentIndex === 16) {
+            nextBtn.textContent = "Lihat Kesimpulan 💝";
+          } else {
+            nextBtn.textContent = "Next 💫";
+          }
+          nextBtn.classList.remove("hidden");
+          restartBtn.classList.add("hidden");
+        } else {
+          // Conclusion
+          createConfetti();
+          introContent.classList.add("hidden");
+          messageContent.classList.add("hidden");
+          conclusionContent.classList.remove("hidden");
+          progressContainer.classList.add("hidden");
+          nextBtn.classList.add("hidden");
+          restartBtn.classList.remove("hidden");
+        }
+      }
+
+      // Next button click
+      nextBtn.addEventListener("click", () => {
+        currentIndex++;
+        updateView();
+      });
+
+      // Restart button click
+      restartBtn.addEventListener("click", () => {
+        currentIndex = -1;
+        updateView();
+      });
+
+      // Config change handler
+      async function onConfigChange(config) {
+        const title = config.main_title || defaultConfig.main_title;
+        const conclusionTitle =
+          config.conclusion_title || defaultConfig.conclusion_title;
+
+        mainTitleEl.textContent = title;
+        conclusionTitleEl.textContent = conclusionTitle;
+      }
+
+      // Map to capabilities
+      function mapToCapabilities(config) {
+        return {
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined,
+        };
+      }
+
+      // Map to edit panel values
+      function mapToEditPanelValues(config) {
+        return new Map([
+          ["main_title", config.main_title || defaultConfig.main_title],
+          [
+            "conclusion_title",
+            config.conclusion_title || defaultConfig.conclusion_title,
+          ],
+        ]);
+      }
+
+      // Initialize
+      createDecorations();
+
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues,
+        });
+      }
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'9cf97326f004fce8',t:'MTc3MTM3NDk4Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
